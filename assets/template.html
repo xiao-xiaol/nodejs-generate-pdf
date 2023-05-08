@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style type="text/css">
+        * {
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+            font-size: 1.76vw;
+        }
+        .wrapper {
+            width: 100%;
+            border: 1px solid #000000;
+            height: 100%;
+            padding: 10px;
+        }
+        h1 {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        td {
+            border: 1px solid #000000;
+            padding: 10px;
+            /* width: 33.4%; */
+        }
+        .introduce {
+            padding: 20px 10px;
+        }
+        .idNumber {
+            max-width: calc(50vw / 3 );
+            font-size: 2.83vw;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <h1>{{ title }}</h1>
+        <table>
+            <tbody>
+                <tr>
+                    <td>姓名:{{ name }}</td>
+                    <td>性别:{{ gender }}</td>
+                    <td>政治面貌:{{ politicalLandscape }}</td>
+                </tr>
+                <tr>
+                    <td class="dynamicSize idNumber">身份证号:{{ idNumber }}</td>
+                    <td colspan="2">年龄:{{ age }}</td>
+                </tr>
+                <tr>
+                    <td colspan="3">家庭住址:{{ address }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="introduce">
+            {{{ introduce }}}
+        </div>
+    </div>
+    
+    
+    <script>
+		// window.dynamicSize = dynamicSize
+		// 获取需要动态设置字体大小的元素
+		function dynamicSize() {
+			const nodeList = document.querySelectorAll('.dynamicSize')
+			nodeList.forEach(element => {
+				console.log('------------------------------')
+				const computedStyle = getComputedStyle(element)
+				const width = getWidth(element, computedStyle)
+				const textContent = element.textContent
+				const { innerWidth, fontSize } = calcTextLen(textContent, computedStyle)
+
+				if (parseFloat(innerWidth) > parseFloat(width)) {
+					const setfontSize = calcSetTextSize({ fontSize, width, textContent, innerWidth })
+                    console.log('setfontSize：'+setfontSize)
+					element.style.fontSize = setfontSize + 'vw'
+				}
+			})
+		}
+
+		function calcSetTextSize({ fontSize, width, textContent, innerWidth }) {
+			// 文本内容长度
+			const textLen = textContent.length
+			// 虚假文本内容宽度
+			const surfaceWidth = textLen * fontSize
+			// 实际文本内容宽度 / 虚假文本内容宽度 = 文本内容的缩放比例
+			const ratio = innerWidth / surfaceWidth
+			// 需要设置文本内容的实际宽度 / 文本内容的缩放比例 = 需要设置的虚假文本内容宽度
+			const hypothesisWidth = width / ratio
+
+            console.log('textLen：'+textLen)
+            console.log('surfaceWidth：'+surfaceWidth)
+            console.log('ratio：'+ratio)
+            console.log('hypothesisWidth：'+hypothesisWidth)
+            console.log('width：'+width)
+            console.log('innerWidth：'+innerWidth)
+			return (hypothesisWidth / textLen).toFixed(2);
+		}
+
+		// 获取内容区宽度
+		function getWidth (element, computedStyle) {
+			const contentWidth = element.clientWidth - parseFloat(computedStyle.paddingLeft) - parseFloat(computedStyle.paddingRight);
+            console.log(element.clientWidth)
+			return convertPxToVw(contentWidth)
+		}
+
+		// 测量元素文本内容实际占用像素(不同字符字号字体占用的大小都不一致，所以不能认为是一样的宽度)
+		function calcTextLen(textContent, computedStyle) {
+			const fontFamily = computedStyle.getPropertyValue('font-family');
+			const fontSize = parseFloat(computedStyle.getPropertyValue('font-size'));
+            console.log(computedStyle.getPropertyValue('font-size'))
+
+			// 测量文本实际宽度
+			const canvas = document.createElement('canvas');
+			canvas.width = 2000
+			const context = canvas.getContext('2d');
+			context.font = `${fontSize}px ${fontFamily}`;
+			const pixelLength = context.measureText(textContent).width;
+
+			return {
+				innerWidth: convertPxToVw(pixelLength),
+				fontSize: convertPxToVw(fontSize)
+			}
+		}
+
+		function convertPxToVw(pxValue) {
+			const screenWidth = window.innerWidth;
+            console.log(`convertPxToVw：------screenWidth：${screenWidth}-------1--pxValue：${pxValue}`)
+			return (parseFloat(pxValue) / screenWidth) * 100;
+		}
+	</script>
+</body>
+</html>

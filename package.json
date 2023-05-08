@@ -1,0 +1,25 @@
+{
+  "name": "generatePDF",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm run nodemon:dev",
+    "nodemon:dev": "nodemon index.js",
+    "dev": "node index.js",
+    "prod": "node .index.js",
+    "staging": "node .index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "archiver": "^5.3.1",
+    "dotenv": "^16.0.3",
+    "mustache": "^4.2.0",
+    "puppeteer": "^19.8.2"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
+  }
+}
